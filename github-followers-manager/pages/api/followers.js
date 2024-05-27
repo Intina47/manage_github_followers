@@ -24,22 +24,26 @@ export default async (req, res) => {
           <p>Following analyzed: ${following.length}</p>
         </div>
         <div class="my-2 md:my-0 md:mx-2 p-2 bg-blue-200 text-blue-700 rounded-lg">
-          <p>People Not you Following Back: ${notFollowingBack.length}</p>
+          <p>Users not following you back: ${notFollowingBack.length}</p>
         </div>
       </div>
     `;
 
       // Generate HTML for each user not following back
-        const html = notFollowingBack.map(user => `
-        <div class="text-center">
-        <h2 class="text-orange-400 font-mono" > People who do not follow you back </h2>
-        <hr class="bg-black" />
-        <div class="my-2 p-2 bg-blue-100 rounded-lg flex justify-between items-center">
-            <p class="text-blue-700">${user}</p>
-            <a href="https://github.com/${user}" target="_blank" class="text-blue-500 hover:text-blue-800">View Profile</a>
-        </div>
-        </div>
-        `).join('');
+      const userHtml = notFollowingBack.map(user => `
+          <div class="my-2 p-2 bg-blue-100 rounded-lg flex justify-between items-center">
+              <p class="text-blue-700">${user}</p>
+              <a href="https://github.com/${user}" target="_blank" class="text-blue-500 hover:text-blue-800">View Profile</a>
+          </div>
+      `).join('');
+
+      const html = `
+          <div class="text-center">
+          <h2 class="text-orange-400 font-mono">People who do not follow you back</h2>
+          <hr class="bg-black" />
+          ${userHtml}
+          </div>
+      `;
 
       res.status(200).send(stats + html);
     } catch (error) {
