@@ -1,9 +1,11 @@
 /* eslint-disable @next/next/no-sync-scripts */
+import { Analytics } from "@vercel/analytics/react"
 import Head from 'next/head';
 import '@/app/globals.css';
 
 export default function Test() {
     return (
+      <>
         <div className='text-center'>
         <Head>
           <script src="https://unpkg.com/htmx.org@1.6.1"></script>
@@ -22,5 +24,7 @@ export default function Test() {
           <div id="results" className='mx-6'></div>
         </main>
       </div>
+      <Analytics />
+    </>
     )
 }
