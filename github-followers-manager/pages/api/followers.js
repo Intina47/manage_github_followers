@@ -1,13 +1,15 @@
-const axios = require('axios');
+import GitHubService from '../../lib/github';
   
 export default async (req, res) => {
   if (req.method === 'POST') {
-    const { username , page = 1} = req.body;
+    const { username } = req.body;
     console.log("Received username: ", username);
 
     try {
-      const followersRes = await axios.get(`https://api.github.com/users/${username}/followers?page=${page}&per_page=100`);
-      const followingRes = await axios.get(`https://api.github.com/users/${username}/following?page=${page}&per_page=100`);
+      const gitHubService = new GitHubService(process.env.GITHUB_TOKEN);
+
+      const followersRes = await gitHubService.getFollowers(username)
+      const followingRes = await gitHubService.getFollowing(username)
 
       const followers = followersRes.data.map(user => user.login);
       const following = followingRes.data.map(user => user.login);
