@@ -1,40 +1,4 @@
-const axios = require('axios');
-
-const getFollowers = async (username, page = 1) => {
-  const response = await axios.get(`https://api.github.com/users/${username}/followers?page=${page}&per_page=100`, {
-    headers: {
-      'Authorization': `token ${process.env.GITHUB_TOKEN}`,
-      'Accept': 'application/vnd.github.v3+json'
-    }
-  });
-  return response.data.map(user => user.login);
-};
-
-const getFollowing = async (username, page = 1) => {
-  const response = await axios.get(`https://api.github.com/users/${username}/following?page=${page}&per_page=100`, {
-    headers: {
-      'Authorization': `token ${process.env.GITHUB_TOKEN}`,
-      'Accept': 'application/vnd.github.v3+json'
-    }
-  });
-  return response.data.map(user => user.login);
-};
-
-const getMutualFollowers = async (username, following) => {
-  const mutualFollowers = new Set();
-
-  for (const user of following) {
-    const followers = await getFollowers(user);
-    followers.forEach(follower => {
-      if (following.includes(follower)) {
-        mutualFollowers.add(follower);
-        console.log("Mutual follower:", follower);
-      }
-    });
-  }
-
-  return [...mutualFollowers].filter(user => user !== username);
-};
+import GitHubService from '../../lib/github';
 
 export default async (req, res) => {
   if (req.method === 'POST') {
@@ -42,12 +6,14 @@ export default async (req, res) => {
     console.log("Received username:", username);
 
     try {
-      const following = await getFollowing(username);
-      const mutualFollowers = await getMutualFollowers(username, following);
+      const gitHubService = new GitHubService(process.env.GITHUB_TOKEN);
+
+      const following = await gitHubService.getFollowing(username);
+      const mutualFollowers = await gitHubService.getMutualFollowers(username, following);
 
       // Filter out users already followed by the user
       const notFollowing = mutualFollowers.filter(user => !following.includes(user));
-      console.log("Not following:", notFollowing); // Add this log
+      console.log("Not following:", notFollowing);
 
       // Generate HTML for each recommended user
       const userHtml = notFollowing.map(user => `
@@ -64,24 +30,6 @@ export default async (req, res) => {
           <hr class="bg-black" />
           ${userHtml}
           </div>
-          <script>
-            async function followUser(user) {
-              const response = await fetch('/api/follow', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ user })
-              });
-
-              const result = await response.json();
-              if (result.success) {
-                alert(\`Successfully followed \${user}\`);
-              } else {
-                alert(\`Failed to follow \${user}\`);
-              }
-            }
-          </script>
       `;
 
       res.status(200).send(html);
