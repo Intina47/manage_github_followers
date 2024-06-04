@@ -24,22 +24,22 @@ class GitHubService {
         return response.data.map(user => user.login);
     }
 
-async getMutualFollowers(username, following) {
-    const mutualFollowers = new Set();
-    let i = 0;
+    async getMutualFollowers(username, following) {
+        const mutualFollowers = new Set();
+        let i = 0;
 
-    while (mutualFollowers.size < 10 && i < following.length) {
-        const followers = new Set(await this.getFollowers(following[i]));
-        followers.forEach(follower => {
-            if (following.includes(follower) && follower != username && mutualFollowers.size < 10) {
-                mutualFollowers.add(follower);
-            }
-        });
-        i++;
+        while (mutualFollowers.size < 10 && i < following.length) {
+            const followers = new Set(await this.getFollowers(following[i]));
+            followers.forEach(follower => {
+                if (following.includes(follower) && follower != username && mutualFollowers.size < 10) {
+                    mutualFollowers.add(follower);
+                }
+            });
+            i++;
+        }
+        
+        return [...mutualFollowers]
     }
-    
-    return [...mutualFollowers]
-}
 }
 
 module.exports = GitHubService;
