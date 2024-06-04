@@ -12,15 +12,12 @@ export default async (req, res) => {
       const followersRes = await gitHubService.getFollowers(username, 1);
       const followingRes = await gitHubService.getFollowing(username, 1);
 
-      const followers = followersRes.data.map(user => user.login);
-      const following = followingRes.data.map(user => user.login);
-
       // Identify users not following back
-      const notFollowingBack = following.filter(user => !followers.includes(user));
+      const notFollowingBack = followingRes.filter(user => !followersRes.includes(user));
 
       // Get mutual followers to recommend users
-      const mutualFollowers = await gitHubService.getMutualFollowers(username, following);
-      const notFollowing = mutualFollowers.filter(user => !following.includes(user));
+      const mutualFollowers = await gitHubService.getMutualFollowers(username, followingRes);
+      const notFollowing = mutualFollowers.filter(user => !followingRes.includes(user));
 
       // Generate HTML for users not following back
       const notFollowingBackHtml = notFollowingBack.map(user => `
@@ -41,7 +38,7 @@ export default async (req, res) => {
       // Combine both sections
       const html = `
         <div class="text-center">
-          <h2 class="text-orange-400 font-mono">People who do not follow you back</h2>
+          <h2 class="text-black font-mono font-bold text-lg">People who do not follow you back</h2>
           <hr class="bg-black" />
           ${notFollowingBackHtml}
           <h2 class="text-orange-400 font-mono">Recommended Users to Follow</h2>
