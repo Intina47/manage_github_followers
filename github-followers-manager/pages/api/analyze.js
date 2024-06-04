@@ -1,5 +1,13 @@
 import GitHubService from '../../lib/github';
 
+/**
+ * Analyzes the GitHub followers and following of a user and generates HTML
+ * to display users who do not follow back and recommended users to follow.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @returns {Promise<void>} - A promise that resolves when the analysis is complete.
+ */
 export default async (req, res) => {
   if (req.method === 'POST') {
     const { username } = req.body;

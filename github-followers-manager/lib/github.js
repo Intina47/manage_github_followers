@@ -1,5 +1,8 @@
 const axios = require('axios');
 
+/**
+ * Represents a service for interacting with the GitHub API.
+ */
 class GitHubService {
     constructor(token) {
         console.log("GitHubService token: ", token);
