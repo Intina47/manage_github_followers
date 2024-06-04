@@ -17,7 +17,7 @@ class GitHubService {
     }
 
     async getFollowing(username, page) {
-        const response = await axios.get(`https://api.github.com/users/${username}/followers?page=${page}&per_page=100`, {
+        const response = await axios.get(`https://api.github.com/users/${username}/following?page=${page}&per_page=100`, {
             header: {
                 'Authorization': `token ${this.token}`,
                 'Accept': 'application/vnd.github.v3+json'
