@@ -11,19 +11,16 @@ export default async (req, res) => {
       const followersRes = await gitHubService.getFollowers(username, 1)
       const followingRes = await gitHubService.getFollowing(username, 1)
 
-      const followers = followersRes.data.map(user => user.login);
-      const following = followingRes.data.map(user => user.login);
-
-      const notFollowingBack = following.filter(user => !followers.includes(user));
-
+      const notFollowingBack = followingRes.filter(user => !followersRes.includes(user));
+      
       // Generate stats
       const stats = `
       <div class="mt-2 flex flex-col text-sm font-thin  md:flex-row justify-between items-cente p-4 rounded-lg">
         <div class="my-2 md:my-0 md:mx-2 p-2 bg-blue-200 text-blue-700 rounded-lg">
-          <p>Followers analyzed: ${followers.length}</p>
+          <p>Followers analyzed: ${followersRes.length}</p>
         </div>
         <div class="my-2 md:my-0 md:mx-2 p-2 bg-blue-200 text-blue-700 rounded-lg">
-          <p>Following analyzed: ${following.length}</p>
+          <p>Following analyzed: ${followingRes.length}</p>
         </div>
         <div class="my-2 md:my-0 md:mx-2 p-2 bg-blue-200 text-blue-700 rounded-lg">
           <p>Users not following you back: ${notFollowingBack.length}</p>
