@@ -38,7 +38,7 @@ class GitHubService {
             i++;
         }
 
-        console.log("Mutual followers:\n ", mutualFollowers);
+        console.log("<========== Mutual followers ==========>:\n ");
         return [...mutualFollowers];
     }
 }
