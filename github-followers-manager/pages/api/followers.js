@@ -8,8 +8,8 @@ export default async (req, res) => {
     try {
       const gitHubService = new GitHubService(process.env.GITHUB_TOKEN);
 
-      const followersRes = await gitHubService.getFollowers(username)
-      const followingRes = await gitHubService.getFollowing(username)
+      const followersRes = await gitHubService.getFollowers(username, 1)
+      const followingRes = await gitHubService.getFollowing(username, 1)
 
       const followers = followersRes.data.map(user => user.login);
       const following = followingRes.data.map(user => user.login);
