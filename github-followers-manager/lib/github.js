@@ -5,46 +5,40 @@ const axios = require('axios');
  */
 class GitHubService {
     constructor(token) {
-        console.log("GitHubService token: ", token);
-        this.token = token;
-    }
-
-    async getFollowers(username, page) {
-        const response = await axios.get(`https://api.github.com/users/${username}/followers?page=${page}&per_page=100`,{
+        this.axiosInstance = axios.create({
+            baseURL: 'https://api.github.com',
             headers: {
-                'Authorization': `token ${this.token}`,
+                'Authorization': `token ${token}`,
                 'Accept': 'application/vnd.github.v3+json'
             }
         });
+    }
+
+    async getFollowers(username, page) {
+        const response = await this.axiosInstance.get(`/users/${username}/followers?page=${page}&per_page=100`);
         return response.data.map(user => user.login);
     }
 
     async getFollowing(username, page) {
-        const response = await axios.get(`https://api.github.com/users/${username}/following?page=${page}&per_page=100`, {
-            header: {
-                'Authorization': `token ${this.token}`,
-                'Accept': 'application/vnd.github.v3+json'
-            }
-        });
+        const response = await this.axiosInstance.get(`/users/${username}/following?page=${page}&per_page=100`);
         return response.data.map(user => user.login);
     }
 
 async getMutualFollowers(username, following) {
     const mutualFollowers = new Set();
+    let i = 0;
 
-    for (const user of following) {
-        if (mutualFollowers.size >= 10) {
-            break;
-        }
-        const followers = await this.getFollowers(user);
+    while (mutualFollowers.size < 10 && i < following.length) {
+        const followers = new Set(await this.getFollowers(following[i]));
         followers.forEach(follower => {
-            if (followers.includes(follower) && follower != username && mutualFollowers.size < 10) {
+            if (following.includes(follower) && follower != username && mutualFollowers.size < 10) {
                 mutualFollowers.add(follower);
             }
         });
+        i++;
     }
-    console.log("Mutual followers:\n ", mutualFollowers);
-    return [...mutualFollowers];
+    
+    return [...mutualFollowers]
 }
 }
 
