@@ -31,14 +31,15 @@ class GitHubService {
         while (mutualFollowers.size < 10 && i < following.length) {
             const followers = new Set(await this.getFollowers(following[i]));
             followers.forEach(follower => {
-                if (following.includes(follower) && follower != username && mutualFollowers.size < 10) {
+                if (follower !== username && mutualFollowers.size < 10) {
                     mutualFollowers.add(follower);
                 }
             });
             i++;
         }
-        
-        return [...mutualFollowers]
+
+        console.log("Mutual followers:\n ", mutualFollowers);
+        return [...mutualFollowers];
     }
 }
 
