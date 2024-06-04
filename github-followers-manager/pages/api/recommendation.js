@@ -13,7 +13,7 @@ export default async (req, res) => {
 
       // Filter out users already followed by the user
       const notFollowing = mutualFollowers.filter(user => !following.includes(user));
-      console.log("Not following:", notFollowing);
+      console.log("Not following: \n", notFollowing);
 
       // Generate HTML for each recommended user
       const userHtml = notFollowing.map(user => `
